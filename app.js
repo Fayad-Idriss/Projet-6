@@ -1,7 +1,7 @@
 //Les technologie requi importer pour le projet 
 const express = require('express');
-const bodyparser = require('body-parser')
 const mongoose = require('mongoose');
+const app = express();
 
 const SauceRoutes = require('./routes/Sauce');
 const userRoutes = require('./routes/User');
@@ -17,7 +17,7 @@ mongoose.connect(`mongodb+srv://majinkizaru:${password}@cluster1.uxodmwr.mongodb
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-  const app = express();
+app.use(express.json());// Ce qui permet a toutes les requets JSON d'être intercepter
 
 
 
@@ -29,12 +29,10 @@ app.use((req, res, next) => {
     next();
   });
 
-  app.use(bodyparser.json());// Ce qui permet a toutes les requets JSON d'être intercepter
-
 
 
 //Les routes 
-app.use('/api/Sauce', SauceRoutes);
+app.use('/api/sauces', SauceRoutes);
 app.use('/api/auth', userRoutes);
 
 
