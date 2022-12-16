@@ -18,9 +18,6 @@ mongoose.connect(`mongodb+srv://majinkizaru:${password}@cluster1.uxodmwr.mongodb
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-app.use(express.json());// Ce qui permet a toutes les requets JSON d'être intercepter
-
-
 
 //Le morceau de code qui vont permettre de retirer la sécurité CORS
 app.use((req, res, next) => {
@@ -30,6 +27,8 @@ app.use((req, res, next) => {
     next();
   });
 
+
+  app.use(express.json());// Ce qui permet a toutes les requets JSON d'être intercepter
 
 
 //Les routes 
