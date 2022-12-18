@@ -82,70 +82,57 @@ exports.getAllSauce = (req, res, next) => {
   );
 };
 
-exports.createLikes = (req, res, next) => {
-  let like = req.body.userId
-  const user = req.body.userId
+exports.createLikes = async (req, res, next) => {
+  try {
+    const sauce = await Sauce.findById(req.params.id)
 
-  const usersLiked = []
-  const usersDisliked = []
+    console.log(sauce);
+    let userId = req.body.userId
+    let like = req.body.like
+    let usersLiked = sauce.usersLiked
+    let usersDisliked = sauce.usersDisliked
 
-  if(like = 1){
+    console.log(usersLiked)
 
-    like ++;
-    usersLiked.push(user, like ++)
-  }
-  if(like = -1){
-
-    like --
-    usersDisliked.push(user, like--);
-  }
-
-  console.log(usersLiked, 'vote 1')
-  console.log(usersDisliked, 'vote -1')
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* exports.likeSauce = (req, res, next) => {
-  const likes = req.body.likes
-  const dislikes = req.body.dislikes
-  const userId = req.body.usersLiked
-  const usersLiked = req.body.usersLiked
-  const usersDisliked = req.body.usersDisliked
-
-  Sauce.findOne({ _id: req.params.id})
-
-    .then(sauce => {
-      switch(likes){
-        case 1: 
-            Sauce.updateOne(
-              {_id: req.params.id},
-              {$push: {usersLiked: userId}, $inc: {likes: +1}}
-            )
-          .then(() => res.status(200).json({ message: 'sauce aimée'}))
-          .catch(error => res.status(400).json({error}))
-          break;
+    switch (like) {
+      case 1: 
+      if ((usersLiked === usersLiked.includes(userId))) {
+        return usersLiked;
+      } else {
+        usersLiked.addToset(userId)
       }
+       usersDisliked = usersDisliked.filter((el) => el !== req.userId)
+       break
+       case -1:
+        if ((usersDisliked === usersDisliked.includes(userId))){
+          return usersDisliked
+        } else {
+          usersDisliked.addToset(userId)
+        }
+        usersLiked = usersLiked.filter((el) => el !== userId)
+        break
+        case 0:
+        usersLiked = usersLiked.filter((el) => el !== userId)
+        usersDisliked = usersDisliked.filter((el) => el !== userId)
+        break
+        default:
+          throw res.status(400).json({error})
+    }
+    console.log(usersLiked)
 
-      switch(dislikes){
-        case -1:
-          Sauce.updateOne(
-            { _id: req.params.id}, 
-            {$push:  {usersDisliked: userId}, $inc: {dislikes: -1}}
-          )
-        .then(() => res.status(200).json ({ message: 'sauce non aimée'}))
-        .catch( error => res.status(400).json ({error}))
-      }
+    const likes = usersLiked.length
+    const dislikes = usersDisliked.length
+
+    await sauce.updateOne({
+      usersLiked: usersLiked,
+      usersDisliked: usersDisliked,
+      likes: likes,
+      dislikes: dislikes,
     })
-} */
+
+    res.status(200).send({ message: "Victoire"})
+    } catch(error){
+      res.status(400).json({ error})
+      console.log(error)
+    }
+}

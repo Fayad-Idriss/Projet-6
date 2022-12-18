@@ -8,7 +8,6 @@ const SauceRoutes = require('./routes/Sauce');
 const userRoutes = require('./routes/User');
 
 
-
 //La base de donnée
 const password = "HAuXcmofW7LSBtt3"
 
@@ -19,6 +18,9 @@ mongoose.connect(`mongodb+srv://majinkizaru:${password}@cluster1.uxodmwr.mongodb
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 
+ app.use(express.json());// Ce qui permet a toutes les requets JSON d'être intercepter
+
+
 //Le morceau de code qui vont permettre de retirer la sécurité CORS
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -26,9 +28,6 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
   });
-
-
-  app.use(express.json());// Ce qui permet a toutes les requets JSON d'être intercepter
 
 
 //Les routes 
