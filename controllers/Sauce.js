@@ -82,7 +82,30 @@ exports.getAllSauce = (req, res, next) => {
   );
 };
 
-exports.createLikes = async (req, res, next) => {
+exports.createLikes = (req, res, next) => {
+  switch (req.body.like){
+    case 1: 
+    Sauce.updateOne({ _id: req.params.id}, {$push:{usersLiked:req.body.userId}, $inc:{likes: +1}}) // On recherche l'id et on push le tableau avec un incrementation de 1
+    .then(() => { res.status(200).json({message: 'liké !'})})
+    .catch(error => res.status(401).json({ error }));
+    break
+    case 0: 
+    Sauce.findOne({ _id: req.params.id})
+    .then(sauce) => {
+      if(sauce.usersLiked.includes(req.body.userId)){
+
+      }
+      if()
+    }
+  }
+
+}
+
+
+
+
+
+/*  exports.createLikes = async (req, res, next) => {
   try {
     const sauce = await Sauce.findById(req.params.id)
 
@@ -135,4 +158,4 @@ exports.createLikes = async (req, res, next) => {
       res.status(400).json({ error})
       console.log(error)
     }
-}
+} */
