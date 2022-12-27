@@ -32,9 +32,11 @@ app.use((req, res, next) => {
   });
 
 
+
+
 //Les routes 
 app.use('/api/sauces', SauceRoutes)
-app.use('/api/auth', userRoutes)
+app.use('/api/auth' , userRoutes)
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 
