@@ -28,25 +28,32 @@ exports.getOneSauce = (req, res, next) => {
 };
 
 exports.modifySauce = (req, res, next) => {
-  const sauceObject = req.file ? {
+
+  let sauceObject = {}
+  req.file ? (
+    Sauce.findOne({
+      _id: req.params.id
+    }).then((sauce) => {
+      const filename = sauce.imageUrl.split('/images/')[1]
+      fs.unlinkSync(`images/${filename}`)
+    }),
+    sauceObject = {
       ...JSON.parse(req.body.sauce),
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-  } : { ...req.body };
-
-  delete sauceObject._userId; //Pour eviter que qu'une personne modifie sont object avec le nom de quelqu'un dautre
-  Sauce.findOne({_id: req.params.id}) // recuperer l'object en base de donnée 
-      .then((sauce) => {
-          if (sauce.userId != req.auth.userId) { // Le cas ou une personne essai de modifier un fichier qui n'est pas le sien 
-              res.status(401).json({ message : 'Not authorized'});
-          } else {
-              Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
-              .then(() => res.status(200).json({message : 'Objet modifié!'}))
-              .catch(error => res.status(401).json({ error }));
-          }
-      })
-      .catch((error) => {
-          res.status(400).json({ error });
-      });
+    }
+  ) : (
+    sauceobject = {...req.body}
+  )
+  
+  Sauce.updateOne(
+    {
+      _id: req.params.id
+    }, {
+      ...sauceObject,
+      _id: req.params.id
+    }
+  )  .then(() => res.status(200).json({message : 'sauce modifier'}))
+     .catch((error) => res.status(400).json({error}))
 };
 
 exports.deleteSauce = (req, res, next) => {
@@ -121,12 +128,3 @@ exports.createLikes = (req, res, next) => {
 
 
 
-/* Sauce.findOne({ _id: req.params.id})
-.then(sauce) => {
-  if(sauce.usersLiked.find(user => user === req.body.userId)){
-
-  }
-  if(sauce.usersDisliked.includes()){
-
-  }
-} */
